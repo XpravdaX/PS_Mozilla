@@ -9,7 +9,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* легкий акцент, не мешает */
         }
 
         html, body {
@@ -19,28 +18,39 @@
         }
 
         body {
-            background-image: url('https://firefox-settings-attachments.cdn.mozilla.net/main-workspace/newtab-wallpapers-v2/0b039df1-971b-445a-84f6-6a15da08940e.svg');
-            background-position: bottom center;
-            background-size: cover;
-            background-attachment: fixed;
-            background-color: #0f0f1a;
+            /* Новый фон: глубокий тёмный градиент + абстрактные цветные блики (красный/голубой) */
+            background: radial-gradient(circle at 10% 20%, #1a0a1f, #05050f 80%);
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             padding-top: 6vh;
-            position: relative;
         }
 
-        /* Погодный виджет (как у друга, но с акцентными оттенками) */
+        /* Декоративные элементы фона (динамичные пятна) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 80% 30%, rgba(255, 0, 0, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 70%, rgba(0, 243, 255, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Погодный виджет — улучшен, убран градиент температуры, добавлен выбор города */
         .weather-widget {
             position: fixed;
             top: 16px;
             right: 16px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(10, 10, 20, 0.75);
             backdrop-filter: blur(12px);
-            border-radius: 28px;
-            padding: 8px 18px;
+            border-radius: 32px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -48,24 +58,28 @@
             font-weight: 500;
             color: #fff;
             z-index: 100;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            transition: 0.2s;
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .weather-widget .temp {
             font-size: 24px;
             font-weight: bold;
+            color: #ffffff; /* убран градиент — обычный белый */
             letter-spacing: 0.5px;
-            background: linear-gradient(135deg, #ff0000, #00f3ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
         }
 
         .weather-widget .desc {
             text-transform: capitalize;
             font-size: 13px;
-            color: #f0f0f0;
+            color: #ddd;
         }
 
         .weather-icon {
@@ -73,7 +87,24 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
-        /* основной контейнер */
+        /* Селектор города */
+        .city-selector {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #ff0000;
+            border-radius: 40px;
+            padding: 4px 10px;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+            transition: 0.2s;
+        }
+        .city-selector:hover {
+            border-color: #00f3ff;
+            background: rgba(0,0,0,0.8);
+        }
+
+        /* Основной контейнер */
         .outer-wrapper {
             display: flex;
             flex-direction: column;
@@ -81,6 +112,8 @@
             width: 100%;
             max-width: 1200px;
             padding: 0 20px;
+            position: relative;
+            z-index: 2;
         }
 
         /* Лого + аватарка + бренд */
@@ -94,22 +127,21 @@
             display: flex;
             align-items: center;
             gap: 18px;
-            background: rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
             padding: 10px 28px 10px 24px;
-            border-radius: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 80px;
+            border: 1px solid rgba(255, 0, 0, 0.5);
             transition: all 0.2s ease;
         }
 
-        /* Аватарка — квадрат 56px, скругление 20px */
         .avatar-image {
             width: 56px;
             height: 56px;
             border-radius: 20px;
             object-fit: cover;
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(0, 243, 255, 0.6);
             transition: transform 0.2s ease;
         }
 
@@ -120,23 +152,22 @@
         .brand-text {
             font-size: 34px;
             font-weight: 800;
-            font-family: "Segoe UI", "Inter", system-ui;
             letter-spacing: 1px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.4);
             white-space: nowrap;
         }
 
         .brand-pravda {
             color: #ff0000;
-            text-shadow: 0 0 6px rgba(255, 0, 0, 0.5);
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
         }
 
         .brand-sempai {
             color: #00f3ff;
-            text-shadow: 0 0 6px rgba(0, 243, 255, 0.5);
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
         }
 
-        /* Поисковая строка — редизайн с акцентной рамкой */
+        /* Поисковая строка */
         .search-wrapper {
             width: 100%;
             max-width: 640px;
@@ -148,18 +179,18 @@
             align-items: center;
             width: 100%;
             height: 56px;
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(12px);
             border-radius: 48px;
             padding: 0 24px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 0, 0, 0.6);
             transition: all 0.2s;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .search-box:focus-within {
-            border-color: #ff0000;
-            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.4), 0 0 0 4px rgba(0, 243, 255, 0.2);
+            border-color: #00f3ff;
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.3), 0 0 0 4px rgba(0, 243, 255, 0.2);
         }
 
         .search-icon {
@@ -167,7 +198,7 @@
             height: 24px;
             margin-right: 14px;
             flex-shrink: 0;
-            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+            filter: brightness(0) invert(1);
         }
 
         .search-input {
@@ -185,10 +216,9 @@
         .search-input::placeholder {
             color: rgba(255, 255, 255, 0.6);
             font-weight: 400;
-            font-size: 16px;
         }
 
-        /* Секция плиток (топ сайты) */
+        /* Плитки */
         .top-sites-section {
             width: 100%;
             max-width: 860px;
@@ -204,10 +234,6 @@
             padding: 0;
         }
 
-        .top-site-outer {
-            list-style: none;
-        }
-
         .top-site-button {
             display: flex;
             flex-direction: column;
@@ -219,35 +245,33 @@
             padding: 10px 6px;
             border-radius: 20px;
             transition: all 0.2s ease;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(4px);
         }
 
         .top-site-button:hover {
-            background: rgba(255, 0, 0, 0.25);
+            background: rgba(255, 0, 0, 0.3);
             transform: translateY(-4px);
             backdrop-filter: blur(8px);
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 14px rgba(255, 0, 0, 0.2);
         }
 
         .tile {
             width: 56px;
             height: 56px;
             border-radius: 18px;
-            background: rgba(20, 20, 40, 0.7);
+            background: rgba(20, 20, 40, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            transition: transform 0.1s;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 243, 255, 0.3);
         }
 
         .tile img {
             width: 36px;
             height: 36px;
             object-fit: contain;
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
         }
 
         .title-label {
@@ -258,43 +282,45 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             padding: 4px 10px;
             border-radius: 40px;
             backdrop-filter: blur(2px);
         }
 
-        /* Кнопка персонализации (стилизована) */
+        /* Кнопка персонализации — яркая, не сливается */
         .personalize-button {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 0, 0, 0.5);
+            bottom: 24px;
+            right: 24px;
+            background: #0a0a14;
+            backdrop-filter: blur(8px);
+            border: 1.5px solid #ff0000;
             border-radius: 40px;
             color: #fff;
-            padding: 8px 16px;
+            padding: 10px 20px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             z-index: 100;
             transition: all 0.2s;
-            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
 
         .personalize-button:hover {
-            background: rgba(255, 0, 0, 0.4);
+            background: #ff0000;
             border-color: #00f3ff;
-            box-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+            box-shadow: 0 0 12px rgba(255, 0, 0, 0.5);
+            transform: scale(1.02);
         }
 
         .personalize-button img {
-            width: 16px;
-            height: 16px;
-            filter: invert(1);
+            width: 18px;
+            height: 18px;
+            filter: invert(1); /* белый карандаш */
         }
 
         /* Меню настроек */
@@ -304,15 +330,15 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #121212ee;
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
+            background: #11111ecc;
+            backdrop-filter: blur(24px);
+            border-radius: 32px;
             color: #fff;
             padding: 28px 32px;
             z-index: 1000;
-            min-width: 320px;
-            border: 1px solid rgba(255, 0, 0, 0.6);
-            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5);
+            min-width: 340px;
+            border: 1px solid #ff0000;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.6);
             text-align: center;
         }
 
@@ -326,8 +352,8 @@
         }
 
         .customize-menu p {
-            margin-bottom: 24px;
-            color: #dddddd;
+            margin-bottom: 20px;
+            color: #ccccdd;
         }
 
         .customize-menu button {
@@ -339,13 +365,38 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
-            font-size: 14px;
         }
 
         .customize-menu button:hover {
             background: #00f3ff;
             color: #000;
-            transform: scale(1.02);
+        }
+
+        .avatar-url-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            background: #1e1e2e;
+            padding: 8px 12px;
+            border-radius: 60px;
+        }
+
+        .avatar-url-row input {
+            background: #0a0a14;
+            border: 1px solid #ff0000;
+            border-radius: 40px;
+            padding: 8px 12px;
+            color: white;
+            width: 200px;
+            outline: none;
+        }
+
+        .avatar-url-row button {
+            background: #00f3ff;
+            padding: 6px 14px;
+            color: black;
         }
 
         .overlay {
@@ -355,20 +406,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(6px);
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(5px);
             z-index: 999;
         }
 
-        .overlay.open {
+        .overlay.open, .customize-menu.open {
             display: block;
         }
 
-        .customize-menu.open {
-            display: block;
-        }
-
-        /* адаптация */
         @media (max-width: 650px) {
             .brand-text {
                 font-size: 24px;
@@ -380,44 +426,48 @@
             .top-site-button {
                 width: 75px;
             }
-            .tile {
-                width: 48px;
-                height: 48px;
-            }
-            .tile img {
-                width: 30px;
-                height: 30px;
-            }
-            .search-box {
-                height: 48px;
+            .weather-widget {
+                top: 12px;
+                right: 12px;
+                padding: 6px 12px;
+                gap: 8px;
+                flex-wrap: wrap;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Погодный виджет с градиентной температурой -->
+    <!-- Погодный виджет с выбором города -->
     <div class="weather-widget" id="weather-widget">
-        <span class="weather-icon" id="weather-icon"></span>
-        <span class="temp" id="weather-temp">--°</span>
-        <span class="desc" id="weather-desc">Загрузка...</span>
+        <div class="weather-info">
+            <span class="weather-icon" id="weather-icon">🌍</span>
+            <span class="temp" id="weather-temp">--°</span>
+            <span class="desc" id="weather-desc">Загрузка...</span>
+        </div>
+        <select id="city-select" class="city-selector">
+            <option value="55.7558,37.6176" selected>Москва</option>
+            <option value="59.9343,30.3351">Санкт-Петербург</option>
+            <option value="55.0084,82.9357">Новосибирск</option>
+            <option value="56.8389,60.6057">Екатеринбург</option>
+            <option value="55.7887,49.1221">Казань</option>
+            <option value="44.9680,34.1122">Симферополь</option>
+        </select>
     </div>
 
     <div class="outer-wrapper">
-        <!-- Брендированный логотип: аватарка + текст PRAVDA_SEMPAI -->
+        <!-- Бренд + аватарка -->
         <div class="logo-and-wordmark-wrapper">
             <div class="brand-container">
-                <!-- Аватарка квадрат, скругление 20px (стиль .avatar-image) -->
-                <img class="avatar-image" id="userAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff0000' rx='20'/%3E%3Ctext x='50' y='68' font-size='48' text-anchor='middle' fill='white' font-family='monospace' font-weight='bold'%3EPS%3C/text%3E%3C/svg%3E"
-                     alt="avatar"
-                     title="PRAVDA_SEMPAI">
+                <img class="avatar-image" id="userAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff0000' rx='20'/%3E%3Ctext x='50' y='68' font-size='46' text-anchor='middle' fill='white' font-family='monospace' font-weight='bold'%3EPS%3C/text%3E%3C/svg%3E"
+                     alt="avatar" title="PRAVDA_SEMPAI">
                 <div class="brand-text">
                     <span class="brand-pravda">PRAVDA</span><span class="brand-sempai">_SEMPAI</span>
                 </div>
             </div>
         </div>
 
-        <!-- Поисковая строка DuckDuckGo -->
+        <!-- Поиск DuckDuckGo -->
         <div class="search-wrapper">
             <div class="search-box">
                 <img class="search-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZmZmZiI+PHBhdGggZD0iTTE1LjUgMTRoLS43OWwtLjI4LS4yN0MxNS40MSAxMi41OSAxNiAxMS4xMSAxNiA5LjUgMTYgNS45MSAxMy4wOSAzIDkuNSAzUzMgNS45MSAzIDkuNSA1LjkxIDE2IDkuNSAxNmMxLjYxIDAgMy4wOS0uNTkgNC4yMy0xLjU3bC4yNy4yOHYuNzlsNSA0Ljk5TDIwLjQ5IDE5bC00Ljk5LTV6bS02IDBDNy4wMSAxNCA1IDExLjk5IDUgOS41UzcuMDEgNSA5LjUgNSAxNCA3LjAxIDE0IDkuNSAxMS45OSAxNCA5LjUgMTR6Ii8+PC9zdmc+" alt="🔍">
@@ -425,86 +475,44 @@
             </div>
         </div>
 
-        <!-- Плитки быстрого доступа: DeepSeek, ВК, YouTube, GitHub, LMS Synergy -->
+        <!-- Плитки: DeepSeek, VK, YouTube, GitHub, LMS Synergy -->
         <div class="top-sites-section">
             <ul class="top-sites-list">
-                <!-- DeepSeek -->
-                <li class="top-site-outer">
-                    <a class="top-site-button" href="https://www.deepseek.com/" target="_blank" rel="noopener noreferrer">
-                        <div class="tile">
-                            <img src="https://www.deepseek.com/favicon.ico" alt="DeepSeek" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z%22/%3E%3C/svg%3E'">
-                        </div>
-                        <span class="title-label">DeepSeek</span>
-                    </a>
-                </li>
-                <!-- VK -->
-                <li class="top-site-outer">
-                    <a class="top-site-button" href="https://vk.com/" target="_blank" rel="noopener noreferrer">
-                        <div class="tile">
-                            <img src="https://vk.com/favicon.ico" alt="VK" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22white%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M21.5 7.8c.2-.5 0-1-.5-1h-2.3c-.5 0-.9.3-1 .8 0 0-.8 2.2-2 3.6-.5.5-.7.7-1 .7-.2 0-.4-.2-.4-.6V7.8c0-.5-.3-.8-.8-.8h-3.4c-.4 0-.6.3-.6.6 0 1.3.9 1.6.9 5.2 0 .8-.1 1-.3 1.3-.2.2-.5.3-.9.3-.9 0-2.8-2-4-4.6-.2-.5-.5-.7-1-.7H5c-.5 0-.7.3-.7.6 0 .8 1.9 5.6 4 7.8 2 2.3 4.4 3.5 6.8 3.5 1.4 0 1.6-.3 1.6-1.2 0-3.2-.2-3.6 1.3-3.6.8 0 1.6.5 2.3 1.4.7.9 1 1.7 1.3 2.1.2.3.6.5 1 .5h2.3c.5 0 .8-.3.6-.8-.2-.6-1-1.5-2-2.5-.7-.7-1.5-1.5-1.7-1.9-.3-.4-.2-.7 0-1 .2-.3 1.2-1.6 1.5-2.3z%22/%3E%3C/svg%3E'">
-                        </div>
-                        <span class="title-label">ВКонтакте</span>
-                    </a>
-                </li>
-                <!-- YouTube -->
-                <li class="top-site-outer">
-                    <a class="top-site-button" href="https://youtube.com/" target="_blank" rel="noopener noreferrer">
-                        <div class="tile">
-                            <img src="https://youtube.com/favicon.ico" alt="YouTube" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M21.6 7.2c-.3-1-1-1.7-2-2-.8-.2-4.4-.3-7.6-.3s-6.8.1-7.6.3c-1 .3-1.7 1-2 2-.2.9-.3 2.4-.3 4.8s.1 3.9.3 4.8c.3 1 1 1.7 2 2 .8.2 4.4.3 7.6.3s6.8-.1 7.6-.3c1-.3 1.7-1 2-2 .2-.9.3-2.4.3-4.8s-.1-3.9-.3-4.8zM9.5 15.5v-7l6 3.5-6 3.5z%22/%3E%3C/svg%3E'">
-                        </div>
-                        <span class="title-label">YouTube</span>
-                    </a>
-                </li>
-                <!-- GitHub -->
-                <li class="top-site-outer">
-                    <a class="top-site-button" href="https://github.com/" target="_blank" rel="noopener noreferrer">
-                        <div class="tile">
-                            <img src="https://github.com/favicon.ico" alt="GitHub" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.21.68-.48 0-.24-.01-.88-.01-1.71-2.78.6-3.37-1.18-3.37-1.18-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48C19.13 20.17 22 16.42 22 12c0-5.52-4.48-10-10-10z%22/%3E%3C/svg%3E'">
-                        </div>
-                        <span class="title-label">GitHub</span>
-                    </a>
-                </li>
-                <!-- LMS Synergy -->
-                <li class="top-site-outer">
-                    <a class="top-site-button" href="https://lms.synergy.ru/" target="_blank" rel="noopener noreferrer">
-                        <div class="tile">
-                            <img src="https://lms.synergy.ru/favicon.ico" alt="LMS Synergy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22white%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M4 4h16v2H4V4zm2 4h12v2H6V8zm14 4H4v2h16v-2zm-2 4H6v2h12v-2z%22/%3E%3C/svg%3E'">
-                        </div>
-                        <span class="title-label">LMS Synergy</span>
-                    </a>
-                </li>
+                <li class="top-site-outer"><a class="top-site-button" href="https://www.deepseek.com/" target="_blank"><div class="tile"><img src="https://www.deepseek.com/favicon.ico" alt="DeepSeek" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z%22/%3E%3C/svg%3E'"></div><span class="title-label">DeepSeek</span></a></li>
+                <li class="top-site-outer"><a class="top-site-button" href="https://vk.com/" target="_blank"><div class="tile"><img src="https://vk.com/favicon.ico" alt="VK" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22white%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M21.5 7.8c.2-.5 0-1-.5-1h-2.3c-.5 0-.9.3-1 .8 0 0-.8 2.2-2 3.6-.5.5-.7.7-1 .7-.2 0-.4-.2-.4-.6V7.8c0-.5-.3-.8-.8-.8h-3.4c-.4 0-.6.3-.6.6 0 1.3.9 1.6.9 5.2 0 .8-.1 1-.3 1.3-.2.2-.5.3-.9.3-.9 0-2.8-2-4-4.6-.2-.5-.5-.7-1-.7H5c-.5 0-.7.3-.7.6 0 .8 1.9 5.6 4 7.8 2 2.3 4.4 3.5 6.8 3.5 1.4 0 1.6-.3 1.6-1.2 0-3.2-.2-3.6 1.3-3.6.8 0 1.6.5 2.3 1.4.7.9 1 1.7 1.3 2.1.2.3.6.5 1 .5h2.3c.5 0 .8-.3.6-.8-.2-.6-1-1.5-2-2.5-.7-.7-1.5-1.5-1.7-1.9-.3-.4-.2-.7 0-1 .2-.3 1.2-1.6 1.5-2.3z%22/%3E%3C/svg%3E'"></div><span class="title-label">ВКонтакте</span></a></li>
+                <li class="top-site-outer"><a class="top-site-button" href="https://youtube.com/" target="_blank"><div class="tile"><img src="https://youtube.com/favicon.ico" alt="YouTube" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M21.6 7.2c-.3-1-1-1.7-2-2-.8-.2-4.4-.3-7.6-.3s-6.8.1-7.6.3c-1 .3-1.7 1-2 2-.2.9-.3 2.4-.3 4.8s.1 3.9.3 4.8c.3 1 1 1.7 2 2 .8.2 4.4.3 7.6.3s6.8-.1 7.6-.3c1-.3 1.7-1 2-2 .2-.9.3-2.4.3-4.8s-.1-3.9-.3-4.8zM9.5 15.5v-7l6 3.5-6 3.5z%22/%3E%3C/svg%3E'"></div><span class="title-label">YouTube</span></a></li>
+                <li class="top-site-outer"><a class="top-site-button" href="https://github.com/" target="_blank"><div class="tile"><img src="https://github.com/favicon.ico" alt="GitHub" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22%3E%3Cpath d=%22M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.21.68-.48 0-.24-.01-.88-.01-1.71-2.78.6-3.37-1.18-3.37-1.18-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48C19.13 20.17 22 16.42 22 12c0-5.52-4.48-10-10-10z%22/%3E%3C/svg%3E'"></div><span class="title-label">GitHub</span></a></li>
+                <li class="top-site-outer"><a class="top-site-button" href="https://lms.synergy.ru/" target="_blank"><div class="tile"><img src="https://lms.synergy.ru/favicon.ico" alt="LMS Synergy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22white%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M4 4h16v2H4V4zm2 4h12v2H6V8zm14 4H4v2h16v-2zm-2 4H6v2h12v-2z%22/%3E%3C/svg%3E'"></div><span class="title-label">LMS Synergy</span></a></li>
             </ul>
         </div>
     </div>
 
-    <!-- Кнопка персонализации (кастомное меню) -->
+    <!-- Кнопка персонализации (теперь видимая) -->
     <button class="personalize-button" id="personalize-btn">
-        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0id2hpdGUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTMgMTcuMjVWMjFoMy43NUwxNy44MSA5Ljk0bC0zLjc1LTMuNzVMMyAxNy4yNXpNMjAuNzEgNy4wNGMuMzktLjM5LjM5LTEuMDIgMC0xLjQxbC0yLjM0LTIuMzRjLS4zOS0uMzktMS4wMi0uMzktMS40MSAwbC0xLjgzIDEuODMgMy43NSAzLjc1IDEuODMtMS44M3oiLz48L3N2Zz4=" alt="⚙️">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTMgMTcuMjVWMjFoMy43NUwxNy44MSA5Ljk0bC0zLjc1LTMuNzVMMyAxNy4yNXpNMjAuNzEgNy4wNGMuMzktLjM5LjM5LTEuMDIgMC0xLjQxbC0yLjM0LTIuMzRjLS4zOS0uMzktMS4wMi0uMzktMS40MSAwbC0xLjgzIDEuODMgMy43NSAzLjc1IDEuODMtMS44M3oiLz48L3N2Zz4=" alt="✏️">
         Настройки
     </button>
 
     <div class="overlay" id="overlay"></div>
     <div class="customize-menu" id="customize-menu">
         <h3>✨ Персонализация ✨</h3>
-        <p>Здесь будут расширенные настройки (тема, макет).<br>Пока можно сменить аватарку!</p>
-        <label style="display: flex; gap: 12px; align-items: center; justify-content: center; margin-bottom: 18px; background: #2a2a3e; padding: 8px; border-radius: 60px;">
-            <span style="font-size: 13px;">🖼️ Своя аватарка (URL):</span>
-            <input type="text" id="avatarUrlInput" placeholder="https://example.com/avatar.png" style="background:#1e1e2a; border:1px solid #ff0000; border-radius: 40px; padding: 6px 12px; color: white; width: 180px;">
-            <button id="applyAvatarBtn" style="background:#00f3ff; border:none; border-radius: 40px; padding: 4px 12px; font-weight: bold;">Применить</button>
-        </label>
+        <p>Настройте внешний вид под себя</p>
+        <div class="avatar-url-row">
+            <span>🖼️ Аватар (URL):</span>
+            <input type="text" id="avatarUrlInput" placeholder="https://example.com/photo.png">
+            <button id="applyAvatarBtn">Применить</button>
+        </div>
         <button id="close-settings-btn">Закрыть</button>
     </div>
 
     <script>
-        // ================== ПОГОДА ===================
-        async function fetchWeather() {
-            // координаты (можно изменить на свои)
-            const lat = 55.7558;     // Москва (более релевантно)
-            const lon = 37.6176;
+        let currentWeatherFetch = null;
+
+        async function fetchWeather(lat, lon) {
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Ошибка сети');
+                if (!response.ok) throw new Error();
                 const data = await response.json();
                 const weather = data.current_weather;
                 const tempC = Math.round(weather.temperature);
@@ -512,49 +520,57 @@
                 const code = weather.weathercode;
                 const descriptions = {
                     0: 'Ясно', 1: 'Преимущественно ясно', 2: 'Переменная облачность', 3: 'Пасмурно',
-                    45: 'Туман', 48: 'Изморозь',
-                    51: 'Лёгкая морось', 53: 'Умеренная морось', 55: 'Сильная морось',
-                    61: 'Небольшой дождь', 63: 'Умеренный дождь', 65: 'Сильный дождь',
-                    71: 'Небольшой снег', 73: 'Умеренный снег', 75: 'Сильный снег',
-                    80: 'Ливень', 81: 'Умеренный ливень', 82: 'Сильный ливень',
-                    95: 'Гроза', 96: 'Гроза с мелким градом', 99: 'Гроза с крупным градом'
+                    45: 'Туман', 48: 'Изморозь', 51: 'Морось', 53: 'Морось', 55: 'Морось',
+                    61: 'Небольшой дождь', 63: 'Дождь', 65: 'Сильный дождь',
+                    71: 'Снег', 73: 'Снег', 75: 'Сильный снег',
+                    80: 'Ливень', 81: 'Ливень', 82: 'Сильный ливень',
+                    95: 'Гроза', 96: 'Гроза', 99: 'Гроза'
+                };
+                const emojiMap = {
+                    0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️',
+                    51: '🌦️', 53: '🌧️', 55: '🌧️', 61: '🌧️', 63: '🌧️', 65: '🌧️',
+                    71: '❄️', 73: '❄️', 75: '❄️', 80: '🌦️', 81: '🌧️', 82: '🌧️',
+                    95: '⛈️', 96: '⛈️', 99: '⛈️'
                 };
                 document.getElementById('weather-desc').textContent = descriptions[code] || 'Облачно';
-                const emojiMap = {
-                    0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
-                    45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌧️', 55: '🌧️',
-                    61: '🌧️', 63: '🌧️', 65: '🌧️', 71: '❄️', 73: '❄️',
-                    75: '❄️', 80: '🌦️', 81: '🌧️', 82: '🌧️', 95: '⛈️', 96: '⛈️', 99: '⛈️'
-                };
                 document.getElementById('weather-icon').textContent = emojiMap[code] || '🌈';
-            } catch (e) {
-                document.getElementById('weather-desc').textContent = 'погода';
+            } catch (err) {
+                document.getElementById('weather-desc').textContent = 'Ошибка';
                 document.getElementById('weather-temp').textContent = '--°';
-                document.getElementById('weather-icon').textContent = '🌍';
-                console.warn(e);
+                document.getElementById('weather-icon').textContent = '⚠️';
+                console.warn(err);
             }
         }
-        fetchWeather();
 
-        // ================== ПОИСК (DuckDuckGo) ==================
+        function initWeather() {
+            const citySelect = document.getElementById('city-select');
+            const defaultCity = citySelect.value; // "55.7558,37.6176"
+            const [lat, lon] = defaultCity.split(',');
+            fetchWeather(lat, lon);
+            citySelect.addEventListener('change', (e) => {
+                const [newLat, newLon] = e.target.value.split(',');
+                fetchWeather(newLat, newLon);
+            });
+        }
+        initWeather();
+
+        // ================== ПОИСК ==================
         const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('keypress', function(e) {
+        searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                const query = encodeURIComponent(this.value.trim());
-                if (query) {
-                    window.location.href = `https://duckduckgo.com/?q=${query}`;
-                }
+                const query = encodeURIComponent(searchInput.value.trim());
+                if (query) window.location.href = `https://duckduckgo.com/?q=${query}`;
             }
         });
 
-        // ============= ПЕРСОНАЛИЗАЦИЯ (меню и смена аватарки) =============
+        // ========== ПЕРСОНАЛИЗАЦИЯ (аватарка, меню) ==========
         const personalizeBtn = document.getElementById('personalize-btn');
         const customizeMenu = document.getElementById('customize-menu');
         const overlay = document.getElementById('overlay');
-        const closeSettingsBtn = document.getElementById('close-settings-btn');
+        const closeBtn = document.getElementById('close-settings-btn');
         const avatarImg = document.getElementById('userAvatar');
         const avatarUrlInput = document.getElementById('avatarUrlInput');
-        const applyAvatarBtn = document.getElementById('applyAvatarBtn');
+        const applyAvatar = document.getElementById('applyAvatarBtn');
 
         function openSettings() {
             customizeMenu.classList.add('open');
@@ -564,63 +580,46 @@
             customizeMenu.classList.remove('open');
             overlay.classList.remove('open');
         }
-
         personalizeBtn.addEventListener('click', openSettings);
         overlay.addEventListener('click', closeSettings);
-        closeSettingsBtn.addEventListener('click', closeSettings);
+        closeBtn.addEventListener('click', closeSettings);
 
-        // Функция обновления аватарки с проверкой на квадратность / скругление CSS уже есть
-        applyAvatarBtn.addEventListener('click', () => {
-            let newUrl = avatarUrlInput.value.trim();
-            if (newUrl) {
-                // Если ссылка валидна — меняем аватарку
-                avatarImg.src = newUrl;
-                // Обработка ошибки загрузки (если картинка не загрузится, возвращаем дефолтную)
-                avatarImg.onerror = () => {
-                    avatarImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff0000' rx='20'/%3E%3Ctext x='50' y='68' font-size='48' text-anchor='middle' fill='white' font-family='monospace'%3EPS%3C/text%3E%3C/svg%3E";
-                    alert('Не удалось загрузить изображение, оставлена дефолтная аватарка');
-                };
-                avatarUrlInput.value = '';
-                closeSettings();
-            } else {
-                alert('Введите URL картинки (прямую ссылку)');
-            }
-        });
-
-        // возможность сохранить аватарку в localStorage (доп. комфорт)
-        function saveAvatarToLocal() {
-            const currentSrc = avatarImg.src;
-            if (currentSrc && !currentSrc.includes('svg%3C') && !currentSrc.includes('PS')) {
-                localStorage.setItem('pravda_avatar', currentSrc);
+        // Сохранение аватарки в localStorage
+        function saveAvatarToLocal(url) {
+            if (url && !url.includes('svg%3C') && !url.includes('PS')) {
+                localStorage.setItem('pravda_avatar_custom', url);
             }
         }
         function loadAvatarFromLocal() {
-            const saved = localStorage.getItem('pravda_avatar');
+            const saved = localStorage.getItem('pravda_avatar_custom');
             if (saved && saved !== avatarImg.src) {
                 avatarImg.src = saved;
                 avatarImg.onerror = () => {
-                    localStorage.removeItem('pravda_avatar');
+                    avatarImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff0000' rx='20'/%3E%3Ctext x='50' y='68' font-size='46' text-anchor='middle' fill='white' font-family='monospace'%3EPS%3C/text%3E%3C/svg%3E";
+                    localStorage.removeItem('pravda_avatar_custom');
                 };
             }
         }
-        // после изменения аватарки вручную через кнопку сохраняем
-        const originalSetAttribute = avatarImg.setAttribute;
-        avatarImg.addEventListener('load', () => {
-            if (avatarImg.src && !avatarImg.src.includes('svg%3C')) {
-                localStorage.setItem('pravda_avatar', avatarImg.src);
+        applyAvatar.addEventListener('click', () => {
+            let url = avatarUrlInput.value.trim();
+            if (!url) {
+                alert('Введите ссылку на изображение');
+                return;
             }
+            avatarImg.src = url;
+            avatarImg.onerror = () => {
+                alert('Не удалось загрузить картинку, проверьте URL');
+                avatarImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff0000' rx='20'/%3E%3Ctext x='50' y='68' font-size='46' text-anchor='middle' fill='white' font-family='monospace'%3EPS%3C/text%3E%3C/svg%3E";
+                localStorage.removeItem('pravda_avatar_custom');
+            };
+            avatarImg.onload = () => {
+                if (url && !url.includes('svg%3C')) localStorage.setItem('pravda_avatar_custom', url);
+            };
+            avatarUrlInput.value = '';
+            closeSettings();
         });
         window.addEventListener('load', () => {
             loadAvatarFromLocal();
-        });
-        // Доп. фикс для кнопки применить + сохранение
-        const origApply = applyAvatarBtn.onclick;
-        applyAvatarBtn.addEventListener('click', () => {
-            setTimeout(() => {
-                if (avatarImg.src && !avatarImg.src.includes('svg%3C')) {
-                    localStorage.setItem('pravda_avatar', avatarImg.src);
-                }
-            }, 100);
         });
     </script>
 </body>
