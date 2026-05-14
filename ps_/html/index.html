@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+    <title>PRAVDA_SEMPAI — новая вкладка</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <!-- Аватарка слева вверху -->
+    <img class="fixed-avatar" id="userAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff0000' rx='16'/%3E%3Ctext x='50' y='68' font-size='46' text-anchor='middle' fill='white' font-family='monospace' font-weight='bold'%3EPS%3C/text%3E%3C/svg%3E" alt="avatar">
+
+    <!-- Погодный виджет -->
+    <div class="weather-widget">
+        <div class="weather-info">
+            <span class="weather-temp" id="weather-temp">--°C</span>
+            <span class="weather-desc" id="weather-desc">Загрузка...</span>
+        </div>
+        <select id="city-select" class="city-selector">
+            <option value="55.7558,37.6176" selected>Москва</option>
+            <option value="59.9343,30.3351">Санкт-Петербург</option>
+            <option value="55.0084,82.9357">Новосибирск</option>
+            <option value="56.8389,60.6057">Екатеринбург</option>
+            <option value="55.7887,49.1221">Казань</option>
+            <option value="44.9680,34.1122">Симферополь</option>
+        </select>
+    </div>
+
+    <div class="outer-wrapper">
+        <div class="brand-title">
+            <span class="brand-pravda">PRAVDA</span><span class="brand-sempai">_SEMPAI</span>
+        </div>
+
+        <div class="search-wrapper">
+            <div class="search-box">
+                <img class="search-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZmZmZiI+PHBhdGggZD0iTTE1LjUgMTRoLS43OWwtLjI4LS4yN0MxNS40MSAxMi41OSAxNiAxMS4xMSAxNiA5LjUgMTYgNS45MSAxMy4wOSAzIDkuNSAzUzMgNS45MSAzIDkuNSA1LjkxIDE2IDkuNSAxNmMxLjYxIDAgMy4wOS0uNTkgNC4yMy0xLjU3bC4yNy4yOHYuNzlsNSA0Ljk5TDIwLjQ5IDE5bC00Ljk5LTV6bS02IDBDNy4wMSAxNCA1IDExLjk5IDUgOS41UzcuMDEgNSA5LjUgNSAxNCA3LjAxIDE0IDkuNSAxMS45OSAxNCA5LjUgMTR6Ii8+PC9zdmc+" alt="Поиск">
+                <input class="search-input" type="text" placeholder="Поиск через DuckDuckGo..." id="search-input" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="top-sites-section">
+            <ul class="top-sites-list" id="sites-list-container"></ul>
+        </div>
+    </div>
+
+    <button class="personalize-button" id="personalize-btn">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTMgMTcuMjVWMjFoMy43NUwxNy44MSA5Ljk0bC0zLjc1LTMuNzVMMyAxNy4yNXpNMjAuNzEgNy4wNGMuMzktLjM5LjM5LTEuMDIgMC0xLjQxbC0yLjM0LTIuMzRjLS4zOS0uMzktMS4wMi0uMzktMS40MSAwbC0xLjgzIDEuODMgMy43NSAzLjc1IDEuODMtMS44M3oiLz48L3N2Zz4=" alt="">
+        Настройки
+    </button>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="customize-menu" id="customize-menu">
+        <h3>Персонализация</h3>
+        <div class="settings-group">
+            <h4>Цветовая гамма</h4>
+            <div class="setting-row">
+                <label>Акцент (красный)</label>
+                <input type="color" id="accentColorPicker" class="color-picker" value="#ff0000">
+            </div>
+            <div class="setting-row">
+                <label>Вторичный (бирюзовый)</label>
+                <input type="color" id="secColorPicker" class="color-picker" value="#00f3ff">
+            </div>
+            <div class="setting-row">
+                <label>Градиент фона: старт</label>
+                <input type="color" id="gradStartPicker" class="color-picker" value="#1a0a1f">
+            </div>
+            <div class="setting-row">
+                <label>Градиент фона: конец</label>
+                <input type="color" id="gradEndPicker" class="color-picker" value="#05050f">
+            </div>
+        </div>
+        <div class="settings-group">
+            <h4>Скругления</h4>
+            <div class="setting-row">
+                <label>Радиус аватарки (px)</label>
+                <input type="range" id="avatarRadiusSlider" min="4" max="32" value="16" step="1">
+                <span id="radiusValueDisplay">16px</span>
+            </div>
+            <div class="setting-row">
+                <label>Радиус плиток (px)</label>
+                <input type="range" id="tileRadiusSlider" min="8" max="32" value="14" step="1">
+                <span id="tileRadiusSpan">14px</span>
+            </div>
+        </div>
+        <div class="settings-group">
+            <h4>Управление ссылками</h4>
+            <div class="add-link-panel">
+                <input type="text" id="newLinkName" placeholder="Название (YouTube)">
+                <input type="text" id="newLinkUrl" placeholder="https://...">
+                <button id="addLinkBtn">Добавить</button>
+            </div>
+            <div id="links-list-container" style="max-height: 180px; overflow-y: auto;"></div>
+            <small style="opacity:0.7">favicon подставляется автоматически</small>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <button id="resetAllSettingsBtn" class="reset-btn">Сбросить всё</button>
+            <button id="close-settings-btn" class="close-settings">Закрыть</button>
+        </div>
+    </div>
+
+    <script src="../js/script.js" defer></script>
+</body>
+</html>
