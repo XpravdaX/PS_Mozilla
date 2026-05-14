@@ -75,7 +75,7 @@ body::before {
     font-size: 14px;
     font-weight: 500;
     z-index: 100;
-    border: 1px solid var(--accent-primary);
+    /* border удалён по заданию */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
